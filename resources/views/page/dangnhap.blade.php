@@ -40,6 +40,12 @@
 						<div class="form-block">
 							<button type="submit" class="btn btn-primary">Login</button>
 						</div>
+						<div class="form-block">
+                       <button type="button" class="btn btn-primary"><a href="{{route('provider_login','facebook')}}">Login facebook</a></button>
+                      	</div>
+                      	<div class="form-block">
+                        <button type="button" class="btn btn-primary">Login goole</button>
+                        </div>
 					</div>
 					<div class="col-sm-3"></div>
 				</div>

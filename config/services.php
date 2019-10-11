@@ -29,5 +29,10 @@ return [
         'secret' => env('AWS_SECRET_ACCESS_KEY'),
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
+    'facebook' => [
+        'client_id' => env('2533781276943319'),
+        'client_secret' => env('c81617660b76a326ddac4137e83c7bd2'),
+        'redirect' => env('http://localhost/cakeshopp/public/dang-nhap/facebook/callback'),
+    ],
 
 ];

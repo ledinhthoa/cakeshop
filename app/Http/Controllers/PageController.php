@@ -13,6 +13,8 @@ use Session;
 use App\User;
 use Hash;
 use Auth;
+use Laravel\Socialite\Facades\Socialite;
+use App\SocialiteProvider;
 use Illuminate\Http\Request;
 
 class PageController extends Controller
@@ -152,7 +154,7 @@ class PageController extends Controller
         if(Auth::attempt($credentials)){
             if(Auth::attempt($credentials)){
 
-                return redirect()->back()->with(['flag'=>'success','message'=>'Đăng nhập thành công']);
+                return redirect(route('quanli.index')) ;
             }
             else{
                 return redirect()->back()->with(['flag'=>'danger','message'=>'Đăng nhập không thành công']);
@@ -171,6 +173,44 @@ class PageController extends Controller
         $product=Product::where('name','like','%'.$req->key.'%')
             ->orwhere('unit_price',$req->key)->get();
         return view('page.search',compact('product'));
+
+    }
+    public function redirectToProduct($providers){
+
+        return Socialite\Facades\Socialite::driver($providers)->redirect();
+
+    }
+    public function handleProviderCallback($providers){
+        try{
+            $socialUser=Socialite\Facades\Socialite::driver($providers)->user();
+            //return $users->getEmail();
+        }catch (\Exception $e){
+            return redirect()->route('index')->with(['flash_level'=>'danger','flash_message'=>"dang nhap thanh cong"]);
+        }
+        $socialProvider=SocialiteProvider::where('provider_id',$socialUser->getId())->first();
+        if (!$socialProvider){
+            $user=User::where('email',$socialUser->getEmail())->first();
+            if ($user){
+                return redirect()->route('trangchu')->with(['flash_level'=>'danger','flash_message'=>'email da co nguoi su dung']);
+
+            }else{
+                $user= new User();
+                $user->email=$socialUser->getEmail();
+                $user->full_name=$socialUser->getName();
+                $image=explode('?',$socialUser->getAvatar());
+                $user->avatar=$image[0];
+                $user->save();
+            }
+            $provider= new SocialiteProvider();
+            $provider->provider_id=$socialUser->getId();
+            $provider->provider=$providers;
+            $provider->email=$socialUser->getEmail();
+            $provider->save();
+        }else{
+            $user=User::where('email',$socialUser->getEmail())->first();
+        }
+        Auth()->login($user);
+        return redirect()->route('index')->with(['flash_level'=>'sucess','flash_message'=>'dang nhap thang cong']);
 
     }
 

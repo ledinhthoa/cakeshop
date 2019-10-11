@@ -11,9 +11,8 @@
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+
+
 Route::get('/', function () {
     return view('welcome');
 });
@@ -81,3 +80,22 @@ Route::get('search',[
 ]);
 
 
+
+
+
+Route::group(['prefix' => 'quanli'], function () {
+    Route::get('/','QuanliController@index')->name('quanli.index');
+    Route::get('/{id}/delete','QuanliController@destroy')->name('quanli.destroy');
+    Route::get('/{id}/edit','QuanliController@edit')->name('quanli.edit');
+    Route::post('/{id}/edit','QuanliController@update')->name('quanli.update');
+
+});
+
+Route::get('login/{provider}',[
+    'as'=>'provider_login',
+    'uses'=>'PageController@redirectToProvider'
+]);
+Route::get('login/{provider}/callback',[
+    'as'=>'provider_login_callback',
+    'uses'=>'PageController@handleProviderCallback'
+]);
